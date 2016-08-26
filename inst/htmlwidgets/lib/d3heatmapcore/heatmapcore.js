@@ -200,7 +200,7 @@ function heatmap(selector, data, options) {
   opts.row_cols = options.row_cols;
   opts.col_cols = options.col_cols;
   opts.show_color_legend = options.show_color_legend;
-  opts.na_color = options.NA_color;
+  opts.na_color = options.na_color;
 
   if (typeof(opts.anim_duration) === 'undefined') {
     opts.anim_duration = 500;

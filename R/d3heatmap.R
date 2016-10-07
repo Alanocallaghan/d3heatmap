@@ -273,7 +273,7 @@ d3heatmap <- function(x,
   ## reorder x (and others)
   ##=======================
   ## TODO: Sensible dimensions plus deal with data.frames
-  x <- x[rowInd, colInd]
+  x <- x[rowInd, colInd, drop = FALSE]
   if (!missing(cellnote))
     cellnote <- cellnote[rowInd, colInd]
   if (!missing(RowSideColors)) {

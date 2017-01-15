@@ -197,8 +197,6 @@ function heatmap(selector, data, options) {
   opts.symbreaks = options.symbreaks;
   opts.colors = options.colors;
   opts.colorkey_title = options.colorkey_title;
-  opts.row_cols = options.row_cols;
-  opts.col_cols = options.col_cols;
   opts.show_color_legend = options.show_color_legend;
   opts.na_color = options.na_color;
 
@@ -210,15 +208,17 @@ function heatmap(selector, data, options) {
     opts.yclust_width = 0;
   if (!data.cols)
     opts.xclust_height = 0;
-  if (!data.rowcolors) {
+  if (!data.side_colors.rowcolors) {
     opts.ycolors_width = 0;
   } else if (typeof(opts.ycolors_width) === 'undefined') {
-    opts.ycolors_width = data.rowcolors.length * 20;
+    // non-flattened matrix
+    opts.ycolors_width = flattenMatrix(data.side_colors.rowcolors).length / 
+      data.side_colors.rowcolors.length * 20;
   }
-  if (!data.colcolors) {
+  if (!data.side_colors.colcolors) {
     opts.xcolors_height = 0;
   } else if (typeof(opts.xcolors_height) === 'undefined') {
-    opts.xcolors_height = data.colcolors.length * 20;
+    opts.xcolors_height = data.side_colors.colcolors.length * 20;
   }
   
   if (typeof(opts.show_grid) === 'number') {
@@ -237,10 +237,10 @@ function heatmap(selector, data, options) {
   );
 
   var colormapBounds = gridSizer.getCellBounds(2, 2);
-  var colDendBounds = gridSizer.getCellBounds(2, 0);
   var colColorsBounds = gridSizer.getCellBounds(2, 1);
-  var rowDendBounds = gridSizer.getCellBounds(0, 2);
+  var colDendBounds = gridSizer.getCellBounds(2, 0);
   var rowColorsBounds = gridSizer.getCellBounds(1, 2);
+  var rowDendBounds = gridSizer.getCellBounds(0, 2);
   var yaxisBounds = gridSizer.getCellBounds(3, 2);
   var xaxisBounds = gridSizer.getCellBounds(2, 3);
 
@@ -257,11 +257,9 @@ function heatmap(selector, data, options) {
   // Create DOM structure
   (function() {
 
-
-    var legend_size = gridSizer.getCellBounds(1,0);
     d3.select('.colorkey')
-      .attr('width', legend_size['height'] * 2)
-      .attr('height', legend_size['height'] * 2);
+      .attr('width', rowDendBounds['width'])
+      .attr('height', colDendBounds['height']);
 
     var colDend = inner.append("svg").classed("dendrogram colDend", true).style(cssify(colDendBounds));
     var rowDend = inner.append("svg").classed("dendrogram rowDend", true).style(cssify(rowDendBounds));
@@ -297,23 +295,23 @@ function heatmap(selector, data, options) {
   
   var row = !data.rows ? null : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width, rowDendBounds.height, opts.axis_padding);
 
-  var rowColorsLabel = opts.row_cols == null ? null : 
-      d3.select('.inner').append('svg')
-      .classed('rowColorsLabel', true)
-      .attr("height", "100%")
-      .attr("width", "20%");
+  var rowColorsLabel = data.side_colors.row_cols == null ? null : 
+      d3.select('.outer').append('svg')
+        .classed('rowColorsLabel', true)
+        .attr("height", "100%")
+        .attr("width", "20%");
 
+  var rowColors = !data.side_colors.rowcolors ? null : rowColorLabels(el.select('svg.rowColors'), 
+    data, rowColorsBounds.width, rowColorsBounds.height, opts.axis_padding);
 
-  var rowColors = !data.rowcolors ? null : rowColorLabels(el.select('svg.rowColors'), data.rowcolors, rowColorsBounds.width, rowColorsBounds.height, opts.axis_padding, opts.row_cols);
-
-
-  var colColorsLabel = opts.col_cols == null ? null : 
-    d3.select('.inner').append('svg')
+  var colColorsLabel = data.side_colors.col_cols == null ? null : 
+    d3.select('.outer').append('svg')
       .classed('colColorsLabel', true)
       .attr("height", "100%")
       .attr("width", "20%");
 
-  var colColors = !data.colcolors ? null : colColorLabels(el.select('svg.colColors'), data.colcolors, colColorsBounds.width, colColorsBounds.height, opts.axis_padding, opts.col_cols);
+  var colColors = !data.side_colors.colcolors ? null : colColorLabels(el.select('svg.colColors'), 
+    data, colColorsBounds.width, colColorsBounds.height, opts.axis_padding);
 
   var col = !data.cols ? null : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height, opts.axis_padding);
   var colormap = colormap(el.select('svg.colormap'), data.matrix, colormapBounds.width, colormapBounds.height);
@@ -361,6 +359,7 @@ function heatmap(selector, data, options) {
       var legend_width = d3.select('.colorkey').attr('width');
       var legend_height = d3.select('.colorkey').attr('height');
 
+
       // http://bl.ocks.org/mbostock/3048450
       var hist = d3.layout.histogram(data.x)
         .bins(opts.breaks)
@@ -385,13 +384,6 @@ function heatmap(selector, data, options) {
         .attr("class", "legend_key")
         .attr('width', '100%')
         .attr("transform", "translate(0," + (legend_height /  2) + ")")
-
-      d3.select('.colorkey').append('text')
-        .classed('colorkey_title', true)
-        .text(opts.colorkey_title)
-        .attr('x', '50%')
-        .attr('y', '95%')
-        .attr('padding-top', '1px');
 
       var histdata = d3.layout.histogram()
         .bins(intervals)(data.x);
@@ -419,10 +411,18 @@ function heatmap(selector, data, options) {
         });
 
     legend_key.append("rect")
-      .attr("width", legend_width - blockwidth)
+      .attr("width", legend_width)
       .attr("height", 8)
       .attr("fill", "transparent")
       .classed("legendbox", true)
+
+    legend_key
+      .append('text')
+      .classed('colorkey_title', true)
+      .text(opts.colorkey_title)
+      .attr('x', '50%')
+      .attr('transform', "translate (0, 40)")
+      .attr('padding-top', '1px');
 
     legend_key.selectAll(".colorkey")
       .data(intervals)
@@ -439,7 +439,6 @@ function heatmap(selector, data, options) {
 
     legend_key.call(xAxis);
 
-    
     
     var x = d3.scale.linear().domain([0, cols]).range([0, width]);
     var y = d3.scale.linear().domain([0, rows]).range([0, height]);
@@ -715,30 +714,37 @@ function heatmap(selector, data, options) {
     return max;
   }
   
-  function rowColorLabels(svg, data, width, height, padding, colors) {
-    svg = svg.append('g');
-    
-    // Convert matrix to vector
-    var rows = data.length;
-    data = flattenMatrix(data);
-    var cols = data.length / rows;
+  function rowColorLabels(svg, data, width, height, padding) {
+    svg2 = svg.append('g').style('overflow', 'hidden');
 
+    d3.select('.rowColors')
+      .style('height', '100%');
+
+    rowcolors = data.side_colors.rowcolors;
+    colnames = data.side_colors.rowcolor_colnames;
+    colors = data.side_colors.row_cols;
+
+    // Convert matrix to vector
+    var cols = rowcolors.length;
+    rowcolors = flattenMatrix(rowcolors);
+    var rows = rowcolors.length / cols;
 
     function onlyUnique(value, index, self) { 
       return self.indexOf(value) === index;
     }
-    var colorlabels = data.filter(onlyUnique);
-
+    var colorlabels = rowcolors.filter(onlyUnique);
 
     // vertical ordinal colour scale
     // with legend
     var collabels = d3.select('.rowColorsLabel')
+      .append("g")
+      .attr("transform", "translate (0," + d3.select(".colorkey").attr("height") + ")");
 
     var labscale = d3.scale.ordinal()
       .domain(colorlabels)
       .range(colors)
 
-    var legendheight = 25*colorlabels.length;
+    var legendheight = 15 * colorlabels.length;
     // Color scale
     var colorscale_legendscale = d3.scale.ordinal()
       .domain(colorlabels) // legend 
@@ -748,8 +754,9 @@ function heatmap(selector, data, options) {
       .scale(colorscale_legendscale)
       .orient("right")
       .tickSize(5);
+    
 
-    // Color ramp: bricks
+    // side color key
     collabels.selectAll(".colorscale_key")
       .data(colorlabels)
       .enter().append("rect")
@@ -774,13 +781,63 @@ function heatmap(selector, data, options) {
         .domain([0, cols])
         .range([0, height]);
     
-    var rect = svg.selectAll("rect").data(data);
+    var rect = svg2.selectAll("rect").data(rowcolors);
     rect.enter()
         .append("rect")
         .attr("fill", function(d, i) { return labscale(d); });
     rect.exit()
         .remove();
-    
+
+
+    // axis labels
+    // Define scale, axis
+    var name_yscale = d3.scale.ordinal()
+        .domain(colnames)
+        .rangeBands([0, width - padding]);
+
+    var name_yaxis = //d3.axisBottom(name_xscale);
+      d3.svg.axis()
+        .scale(name_yscale)
+        .orient("bottom")
+        .outerTickSize(0)
+        .tickPadding(padding)
+        .tickValues(colnames);
+
+    // Create the actual axis
+    var axisNodes = svg.append("g")
+        .attr("transform", "translate(" + (width / rows) + ", " + (height + padding) + ")")
+        .call(name_yaxis)
+      .selectAll("text")
+      .classed("tick", true)
+      .attr("dx", ".8em")
+      .attr("transform", "rotate(90)");
+
+    var tooltip = d3.tip()
+            .attr('class', 'd3heatmap-tip')
+            .html(function(d, i) {
+              return "<table>" + 
+                "<tr><th align=\"right\">Variable</th><td>" + htmlEscape(colnames[Math.floor(i / cols)]) + "</td></tr>" +
+                "<tr><th align=\"right\">Row</th><td>" + htmlEscape(data.matrix.rows[i % cols]) + "</td></tr>" +
+                "<tr><th align=\"right\">Value</th><td>" + htmlEscape(d) + "</td></tr>" +
+                "</table>";
+            })
+            .direction("se")
+            .style("position", "fixed");
+
+    rect.call(tooltip);
+    rect.on("mouseover", function(d, i) {
+      tooltip
+        .show(d, i)
+        .style({
+              top: d3.event.clientY + 15 + "px",
+              left: d3.event.clientX + 15 + "px",
+              opacity: 0.9
+            });
+    })
+    .on("mouseleave", function() {
+      tooltip.hide();
+    })
+
     function draw(selection) {
       selection
           .attr("x", function(d, i) {
@@ -814,33 +871,37 @@ function heatmap(selector, data, options) {
     return vec;
   }
 
-  function colColorLabels(svg, data, width, height, padding, colors) {
-    svg = svg.append('g');
+  function colColorLabels(svg, data, width, height, padding) {
+    svg2 = svg.append('g').style('overflow', 'hidden');
     
+    d3.select('.colColors')
+      .style('width', '100%');
+
+    colcolors = data.side_colors.colcolors;
+    colnames = data.side_colors.colcolor_colnames;
+    colors = data.side_colors.col_cols;
+
     // Convert matrix to vector
-    var rows = data.length;
-    data = flattenMatrix(data);
-    var cols = data.length / rows;
+    var rows = colcolors.length;
+    colcolors = flattenMatrix(colcolors);
+    var cols = colcolors.length / rows;
     
-
-
-
     function onlyUnique(value, index, self) { 
       return self.indexOf(value) === index;
     }
-    var colorlabels = data.filter(onlyUnique);
+    var colorlabels = colcolors.filter(onlyUnique);
 
     // vertical ordinal colour scale
     // with legend
-    var collabels=d3.select('.colColorsLabel')
+    var collabels = d3.select('.colColorsLabel')
+      .append("g")
+      .attr("transform", "translate (0," + d3.select(".colorkey").attr("height") + ")");
 
     var labscale = d3.scale.ordinal()
       .domain(colorlabels)
       .range(colors)
 
-
-
-    var legendheight = 25 * colorlabels.length;
+    var legendheight = 15 * colorlabels.length;
     // Color scale
     var colorscale_legendscale = d3.scale.ordinal()
       .domain(colorlabels) // legend 
@@ -862,12 +923,12 @@ function heatmap(selector, data, options) {
         return (colorscale_legendscale.rangeBand()); 
       })
       .attr("y", function(d) { 
-        return (colorscale_legendscale(d) +"px"); 
+        return (colorscale_legendscale(d) +"px");
       })
       .attr('fill', function(d) { return labscale(d); });
 
     collabels.call(yAxis);
-
+    
     var x = d3.scale.linear()
         .domain([0, cols])
         .range([0, width]);
@@ -875,12 +936,63 @@ function heatmap(selector, data, options) {
         .domain([0, rows])
         .range([0, height - padding]);
     
-    var rect = svg.selectAll("rect").data(data);
+    var rect = svg2.selectAll("rect").data(colcolors);
     rect.enter()
         .append("rect")
         .attr("fill", function(d, i) { return labscale(d); });
     rect.exit()
         .remove();
+
+
+
+    // axis labels
+    // Define scale, axis
+    var name_xscale = d3.scale.ordinal()
+        .domain(colnames)
+        .rangeBands([0, height - padding]);
+
+    var name_xaxis = //d3.axisBottom(name_xscale);
+      d3.svg.axis()
+        .scale(name_xscale)
+        .orient("right")
+        .outerTickSize(0)
+        .tickPadding(padding)
+        .tickValues(colnames);
+
+    // Create the actual axis
+    var axisNodes = svg.append("g")
+        .attr("transform", "translate(" + width + padding + ", 0 )")
+        .call(name_xaxis)
+        .selectAll("text")
+        .classed("tick", true);
+
+
+    // mouseover tooltip
+    var tooltip = d3.tip()
+            .attr('class', 'd3heatmap-tip')
+            .html(function(d, i) {
+              return "<table>" + 
+                "<tr><th align=\"right\">Variable</th><td>" + htmlEscape(colnames[Math.floor(i / cols)]) + "</td></tr>" +
+                "<tr><th align=\"right\">Column</th><td>" + htmlEscape(data.matrix.cols[i % cols]) + "</td></tr>" +
+                "<tr><th align=\"right\">Value</th><td>" + htmlEscape(d) + "</td></tr>" +
+                "</table>";
+            })
+            .direction("se")
+            .style("position", "fixed");
+
+    rect.call(tooltip);
+    rect.on("mouseover", function(d, i) {
+      tooltip
+        .show(d, i)
+        .style({
+              top: d3.event.clientY + 15 + "px",
+              left: d3.event.clientX + 15 + "px",
+              opacity: 0.9
+            });
+    })
+    .on("mouseleave", function() {
+      tooltip.hide();
+    })
     
     function draw(selection) {
       selection

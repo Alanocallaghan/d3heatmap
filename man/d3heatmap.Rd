@@ -24,6 +24,8 @@ d3heatmap(x, main = "Heatmap", Rowv = TRUE, Colv = if (symm) "Rowv" else
 \item{x}{A numeric matrix
 Defaults to \code{TRUE} unless \code{x} contains any \code{NA}s.}
 
+\item{main}{Plot title}
+
 \item{Rowv}{determines if and how the row dendrogram should be reordered.    By default, it is TRUE, which implies dendrogram is computed and reordered based on row means. If NULL or FALSE, then no dendrogram is computed and no reordering is done. If a dendrogram, then it is used "as-is", ie without any reordering. If a vector of integers, then dendrogram is computed and reordered based on the order of the vector.}
 
 \item{Colv}{determines if and how the column dendrogram should be reordered.    Has the options as the Rowv argument above and additionally when x is a square matrix, Colv = "Rowv" means that columns should be treated identically to the rows.}
@@ -97,8 +99,12 @@ must be equal to breaks}
 
 \item{symbreaks}{Breaks symmetrical around zero?}
 
+\item{colorkey_title}{Name of color key}
+
 \item{show_color_legend}{Show color key and density 
 information? (TRUE/FALSE)}
+
+\item{col_cols, row_cols}{Colors to be used in RowSideColors and ColSideColors respectively}
 
 \item{width}{Width in pixels (optional, defaults to automatic sizing).}
 
@@ -126,9 +132,6 @@ For large \code{x} it may help performance to set this value to \code{0}.}
 \item{padding}{css/html padding around app}
 
 \item{...}{Undocumented/experimental options (currently \code{xcolors_height} and \code{ycolors_width})}
-
-\item{breaks}{Analagous to heatmap.2 breaks. Should
-be the same number of breaks as colors}
 }
 \description{
 Creates a D3.js-based heatmap widget.

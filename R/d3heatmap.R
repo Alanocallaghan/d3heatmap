@@ -16,6 +16,7 @@ NULL
 #' 
 #' @param x A numeric matrix
 #'   Defaults to \code{TRUE} unless \code{x} contains any \code{NA}s.
+#' @param main Plot title
 #' @param theme A custom CSS theme to use. Currently the only valid values are 
 #'   \code{""} and \code{"dark"}. \code{"dark"} is primarily intended for 
 #'   standalone visualizations, not R Markdown or Shiny.
@@ -30,6 +31,7 @@ NULL
 #'   \code{\link[grDevices]{colorRamp}}.
 #' @param show_color_legend Show color key and density 
 #'    information? (TRUE/FALSE)
+#' @param colorkey_title Name of color key
 #' @param breaks Analagous to heatmap.2 breaks. Should
 #'   be the same number of breaks as colors
 #' @param symbreaks Breaks symmetrical around zero?
@@ -85,8 +87,7 @@ NULL
 #' @param RowSideFactors (optional) character vector of length nrow(x) containing
 #'   the color names for a vertical side bar that may be used to annotate the
 #'   rows of x.
-#' @param breaks Analagous to heatmap.2 breaks. Should
-#'   be the same number of breaks as colors
+#' @param col_cols,row_cols Colors to be used in RowSideColors and ColSideColors respectively
 #' @param labRow character vectors with row labels to use (from top to bottom); default to rownames(x).
 #' @param labCol character vectors with column labels to use (from left to right); default to colnames(x).
 #' @param padding css/html padding around app

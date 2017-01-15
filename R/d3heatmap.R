@@ -79,10 +79,10 @@ NULL
 #' @param cexCol positive numbers. If not missing, it will override \code{yaxis_font_size}
 #' and will give it a value cexCol*14
 #'
-#' @param ColSideColors (optional) character vector of length ncol(x) containing
+#' @param ColSideFactors (optional) character vector of length ncol(x) containing
 #'   the color names for a horizontal side bar that may be used to annotate the
 #'   columns of x.
-#' @param RowSideColors (optional) character vector of length nrow(x) containing
+#' @param RowSideFactors (optional) character vector of length nrow(x) containing
 #'   the color names for a vertical side bar that may be used to annotate the
 #'   rows of x.
 #' @param breaks Analagous to heatmap.2 breaks. Should
@@ -127,8 +127,14 @@ d3heatmap <- function(x,
   scale = c("none", "row", "column"),
   na.rm = TRUE,
 
-  ColSideColors,
-  RowSideColors,
+  ColSideFactors = ColSideColors,
+  RowSideFactors = RowSideColors,
+
+  RowSideColors = NULL,
+  ColSideColors = NULL,
+
+  row_side_palette = c("purple", "orange", "black"),
+  col_side_palette = c("cyan", "maroon", "green"),
   
   labRow = rownames(x), 
   labCol = colnames(x), 
@@ -276,22 +282,32 @@ d3heatmap <- function(x,
   x <- x[rowInd, colInd, drop = FALSE]
   if (!missing(cellnote))
     cellnote <- cellnote[rowInd, colInd]
-  if (!missing(RowSideColors)) {
-    if (!is.matrix(RowSideColors)) {
-      RowSideColors <- matrix(RowSideColors, nrow = 1)
+  if (!is.null(RowSideFactors)) {
+    RowSideFactors <- RowSideFactors[rowInd, , drop = FALSE]
+
+    if (is.matrix(RowSideFactors) | is.data.frame(RowSideFactors)) {
+      rowcolor_colnames <- colnames(RowSideFactors)
     }
-    rsc_labs <- unique(as.factor(RowSideColors))
-    row_cols <- colorRampPalette(c("purple", "orange", "black"))(length(rsc_labs))
-    
-    RowSideColors <- RowSideColors[, rowInd, drop = FALSE]
+
+    if (!is.matrix(RowSideFactors)) {
+      RowSideFactors <- as.matrix(RowSideFactors)
+    }
+    rsc_labs <- unique(as.factor(RowSideFactors))
+    row_cols <- colorRampPalette(row_side_palette)(length(rsc_labs))
+
   }
-  if (!missing(ColSideColors)) {
-    if (!is.matrix(ColSideColors)) {
-      ColSideColors <- matrix(ColSideColors, nrow = 1)
+  if (!is.null(ColSideFactors)) {
+    ColSideFactors <- ColSideFactors[, colInd, drop = FALSE]
+
+    if (is.matrix(ColSideFactors) | is.data.frame(ColSideFactors)) {
+      colcolor_colnames <- rownames(ColSideFactors)
     }
-    csc_labs <- unique(as.factor(ColSideColors))
-    col_cols <- colorRampPalette(c("cyan", "maroon", "green"))(length(csc_labs))
-    ColSideColors <- ColSideColors[, colInd, drop = FALSE]
+
+    if (!is.matrix(ColSideFactors)) {
+      ColSideFactors <- matrix(as.matrix(ColSideFactors), nrow = 1)
+    }
+    csc_labs <- unique(as.factor(ColSideFactors))
+    col_cols <- colorRampPalette(col_side_palette)(length(csc_labs))
   }
 
   ## Dendrograms - Update the labels and change to dendToTree
@@ -386,23 +402,34 @@ d3heatmap <- function(x,
     scalecolors <- colorRampPalette(scalecolors)(breaks + 1)
   }
 
-  options <- c(options, list(
-    xaxis_height = xaxis_height,
-    yaxis_width = yaxis_width,
-    xaxis_font_size = xaxis_font_size,
-    yaxis_font_size = yaxis_font_size,
-    brush_color = brush_color,
-    show_grid = show_grid,
-    anim_duration = anim_duration,
-    breaks=breaks,
-    symbreaks=symbreaks,
-    colorkey_title=colorkey_title,
-    colors=scalecolors,
+  side_colors <- list(
     col_cols=col_cols,
     row_cols=row_cols,
-    na_color=na_color,
-    show_color_legend = show_color_legend
-  ))
+    rowcolor_colnames = if (exists("rowcolor_colnames", inherits = FALSE)) rowcolor_colnames 
+      else NULL,
+    colcolor_colnames = if (exists("colcolor_colnames", inherits = FALSE)) colcolor_colnames 
+      else NULL,
+    rowcolors = if (!is.null(RowSideFactors)) RowSideFactors else NULL,
+    colcolors = if (!is.null(ColSideFactors)) ColSideFactors else NULL
+  )
+
+  options <- c(options, 
+    list(
+      xaxis_height = xaxis_height,
+      yaxis_width = yaxis_width,
+      xaxis_font_size = xaxis_font_size,
+      yaxis_font_size = yaxis_font_size,
+      brush_color = brush_color,
+      show_grid = show_grid,
+      anim_duration = anim_duration,
+      breaks=breaks,
+      symbreaks=symbreaks,
+      colorkey_title=colorkey_title,
+      colors=scalecolors,
+      na_color=na_color,
+      show_color_legend = show_color_legend
+    )
+  )
 
   if (is.null(rowDend)) {
     c(options, list(yclust_width = 0))
@@ -414,10 +441,9 @@ d3heatmap <- function(x,
   payload <- list(rows = rowDend, 
     cols = colDend, 
     matrix = mtx, 
+    side_colors = side_colors,
     title = main,
     image = imgUri,
-    rowcolors = if (!missing(RowSideColors)) RowSideColors,
-    colcolors = if (!missing(ColSideColors)) ColSideColors,
     theme = theme, options = options)
   
   # create widget

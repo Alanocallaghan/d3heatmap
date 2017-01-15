@@ -721,8 +721,8 @@ function heatmap(selector, data, options) {
       .style('height', '100%');
 
     rowcolors = data.side_colors.rowcolors;
-    colnames = data.side_colors.rowcolor_colnames;
-    colors = data.side_colors.row_cols;
+    row_colnames = data.side_colors.rowcolor_colnames;
+    row_colors = data.side_colors.row_cols;
 
     // Convert matrix to vector
     var cols = rowcolors.length;
@@ -742,7 +742,7 @@ function heatmap(selector, data, options) {
 
     var labscale = d3.scale.ordinal()
       .domain(colorlabels)
-      .range(colors)
+      .range(row_colors)
 
     var legendheight = 15 * colorlabels.length;
     // Color scale
@@ -792,7 +792,7 @@ function heatmap(selector, data, options) {
     // axis labels
     // Define scale, axis
     var name_yscale = d3.scale.ordinal()
-        .domain(colnames)
+        .domain(row_colnames)
         .rangeBands([0, width - padding]);
 
     var name_yaxis = //d3.axisBottom(name_xscale);
@@ -801,22 +801,22 @@ function heatmap(selector, data, options) {
         .orient("bottom")
         .outerTickSize(0)
         .tickPadding(padding)
-        .tickValues(colnames);
+        .tickValues(row_colnames);
 
     // Create the actual axis
     var axisNodes = svg.append("g")
         .attr("transform", "translate(" + (width / rows) + ", " + (height + padding) + ")")
         .call(name_yaxis)
       .selectAll("text")
-      .classed("tick", true)
-      .attr("dx", ".8em")
-      .attr("transform", "rotate(90)");
+        .classed("tick", true)
+        .attr("transform", "rotate(90), translate(0, 0)")
+        .style("text-anchor", "start");
 
     var tooltip = d3.tip()
             .attr('class', 'd3heatmap-tip')
             .html(function(d, i) {
               return "<table>" + 
-                "<tr><th align=\"right\">Variable</th><td>" + htmlEscape(colnames[Math.floor(i / cols)]) + "</td></tr>" +
+                "<tr><th align=\"right\">Variable</th><td>" + htmlEscape(row_colnames[Math.floor(i / cols)]) + "</td></tr>" +
                 "<tr><th align=\"right\">Row</th><td>" + htmlEscape(data.matrix.rows[i % cols]) + "</td></tr>" +
                 "<tr><th align=\"right\">Value</th><td>" + htmlEscape(d) + "</td></tr>" +
                 "</table>";
@@ -836,7 +836,7 @@ function heatmap(selector, data, options) {
     })
     .on("mouseleave", function() {
       tooltip.hide();
-    })
+    });
 
     function draw(selection) {
       selection
@@ -878,8 +878,8 @@ function heatmap(selector, data, options) {
       .style('width', '100%');
 
     colcolors = data.side_colors.colcolors;
-    colnames = data.side_colors.colcolor_colnames;
-    colors = data.side_colors.col_cols;
+    col_colnames = data.side_colors.colcolor_colnames;
+    col_colors = data.side_colors.col_cols;
 
     // Convert matrix to vector
     var rows = colcolors.length;
@@ -899,7 +899,7 @@ function heatmap(selector, data, options) {
 
     var labscale = d3.scale.ordinal()
       .domain(colorlabels)
-      .range(colors)
+      .range(col_colors)
 
     var legendheight = 15 * colorlabels.length;
     // Color scale
@@ -948,7 +948,7 @@ function heatmap(selector, data, options) {
     // axis labels
     // Define scale, axis
     var name_xscale = d3.scale.ordinal()
-        .domain(colnames)
+        .domain(col_colnames)
         .rangeBands([0, height - padding]);
 
     var name_xaxis = //d3.axisBottom(name_xscale);
@@ -957,7 +957,7 @@ function heatmap(selector, data, options) {
         .orient("right")
         .outerTickSize(0)
         .tickPadding(padding)
-        .tickValues(colnames);
+        .tickValues(col_colnames);
 
     // Create the actual axis
     var axisNodes = svg.append("g")
@@ -972,7 +972,7 @@ function heatmap(selector, data, options) {
             .attr('class', 'd3heatmap-tip')
             .html(function(d, i) {
               return "<table>" + 
-                "<tr><th align=\"right\">Variable</th><td>" + htmlEscape(colnames[Math.floor(i / cols)]) + "</td></tr>" +
+                "<tr><th align=\"right\">Variable</th><td>" + htmlEscape(col_colnames[Math.floor(i / cols)]) + "</td></tr>" +
                 "<tr><th align=\"right\">Column</th><td>" + htmlEscape(data.matrix.cols[i % cols]) + "</td></tr>" +
                 "<tr><th align=\"right\">Value</th><td>" + htmlEscape(d) + "</td></tr>" +
                 "</table>";

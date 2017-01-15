@@ -289,7 +289,6 @@ d3heatmap <- function(x,
     if (is.matrix(RowSideFactors) | is.data.frame(RowSideFactors)) {
       rowcolor_colnames <- colnames(RowSideFactors)
     }
-
     if (!is.matrix(RowSideFactors)) {
       RowSideFactors <- as.matrix(RowSideFactors)
     }

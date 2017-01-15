@@ -18,10 +18,9 @@ This is an R package that implements a heatmap [htmlwidget](http://htmlwidgets.o
 
 New functionality:
 
-* Color Legend
+* Color legend and histogram
 * ColSideColors and RowSideColors legend
-* (Soon): Better layout/padding
-* (Soon): Different parameters 
+* Mouseover for ColSideColors and RowSideColors
 
 ### Example
 

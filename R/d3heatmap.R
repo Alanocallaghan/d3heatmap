@@ -304,7 +304,7 @@ d3heatmap <- function(x,
     }
 
     if (!is.matrix(ColSideFactors)) {
-      ColSideFactors <- matrix(as.matrix(ColSideFactors), nrow = 1)
+      ColSideFactors <- as.matrix(ColSideFactors)
     }
     csc_labs <- unique(as.factor(ColSideFactors))
     col_cols <- colorRampPalette(col_side_palette)(length(csc_labs))

@@ -17,4 +17,3 @@ http://stackoverflow.com/questions/13289009/check-if-character-string-is-a-valid
 are_colors 
 Helper function to check for valid color strings
 }
-

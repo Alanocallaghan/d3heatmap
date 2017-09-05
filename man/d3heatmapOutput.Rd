@@ -52,4 +52,3 @@ shinyApp(ui, server)
 }
   
 }
-

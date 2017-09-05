@@ -11,14 +11,18 @@ d3heatmap(x, main = "Heatmap", Rowv = TRUE, Colv = if (symm) "Rowv" else
   TRUE, distfun = dist, hclustfun = hclust, dendrogram = c("both", "row",
   "column", "none"), reorderfun = function(d, w) reorder(d, w), k_row, k_col,
   symm = FALSE, revC, scale = c("none", "row", "column"), na.rm = TRUE,
-  ColSideColors, RowSideColors, labRow = rownames(x), labCol = colnames(x),
-  cexRow, cexCol, na_color = "#000000", digits = 3L, cellnote,
-  cellnote_scale = FALSE, theme = NULL, colors = "RdYlBu", breaks = 30,
-  scalecolors = NULL, symbreaks = FALSE, colorkey_title = "Value",
-  show_color_legend = TRUE, col_cols = NULL, row_cols = NULL,
-  width = NULL, height = NULL, xaxis_height = 80, yaxis_width = 120,
-  xaxis_font_size = NULL, yaxis_font_size = NULL, brush_color = "#0000FF",
-  show_grid = TRUE, anim_duration = 500, padding = 0, ...)
+  ColSideFactors = ColSideColors, RowSideFactors = RowSideColors,
+  RowSideColors = NULL, ColSideColors = NULL,
+  row_side_palette = c("purple", "orange", "black"),
+  col_side_palette = c("cyan", "maroon", "green"), labRow = rownames(x),
+  labCol = colnames(x), cexRow, cexCol, na_color = "#000000", digits = 3L,
+  cellnote, cellnote_scale = FALSE, theme = NULL, colors = "RdYlBu",
+  breaks = 30, scalecolors = NULL, symbreaks = FALSE,
+  colorkey_title = "Value", show_color_legend = TRUE, col_cols = NULL,
+  row_cols = NULL, width = NULL, height = NULL, xaxis_height = 80,
+  yaxis_width = 120, xaxis_font_size = NULL, yaxis_font_size = NULL,
+  brush_color = "#0000FF", show_grid = TRUE, anim_duration = 500,
+  padding = 0, ...)
 }
 \arguments{
 \item{x}{A numeric matrix
@@ -52,11 +56,11 @@ This is useful for cor matrix.}
 
 \item{na.rm}{logical indicating whether NA's should be removed.}
 
-\item{ColSideColors}{(optional) character vector of length ncol(x) containing
+\item{ColSideFactors}{(optional) character vector of length ncol(x) containing
 the color names for a horizontal side bar that may be used to annotate the
 columns of x.}
 
-\item{RowSideColors}{(optional) character vector of length nrow(x) containing
+\item{RowSideFactors}{(optional) character vector of length nrow(x) containing
 the color names for a vertical side bar that may be used to annotate the
 rows of x.}
 
@@ -145,4 +149,3 @@ d3heatmap(mtcars, scale = "column", colors = "Blues")
 \seealso{
 \link{heatmap}, \link[gplots]{heatmap.2}
 }
-

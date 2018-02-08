@@ -1,12 +1,10 @@
 ___
 
 # Fork of d3heatmap to add colorlegend and row/column bar labels
-
 ___
 
-**If you are using a version of d3heatmap older than 0.4.0, please upgrade now! Previous versions put row and column names in the incorrect order!**
 
-___
+[![Build Status](https://travis-ci.org/Alanocallaghan/d3heatmap.svg?branch=master)](https://travis-ci.org/Alanocallaghan/d3heatmap)
 
 # D3 Heatmap for R
 

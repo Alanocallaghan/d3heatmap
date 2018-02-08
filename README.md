@@ -3,6 +3,11 @@ ___
 # Fork of d3heatmap to add colorlegend and row/column bar labels
 ___
 
+Note: this repository is not under active development. 
+Bug reports and feature requests are welcome, but 
+may not be implemented quickly. It is recommended to 
+instead use a more recent package, such as [heatmaply](https://github.com/talgalili/heatmaply)
+or [iheatmapr](https://github.com/ropensci/iheatmapr)
 
 [![Build Status](https://travis-ci.org/Alanocallaghan/d3heatmap.svg?branch=master)](https://travis-ci.org/Alanocallaghan/d3heatmap)
 

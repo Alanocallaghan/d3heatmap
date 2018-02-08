@@ -301,8 +301,11 @@ function heatmap(selector, data, options) {
         .attr("height", "100%")
         .attr("width", "20%");
 
-  var rowColors = !data.side_colors.rowcolors ? null : rowColorLabels(el.select('svg.rowColors'), 
-    data, rowColorsBounds.width, rowColorsBounds.height, opts.axis_padding);
+  var rowColors = !data.side_colors.rowcolors ? null : 
+    rowColorLabels(el.select('svg.rowColors'), 
+      data, 
+      rowColorsBounds.width, 
+      rowColorsBounds.height, opts.axis_padding);
 
   var colColorsLabel = data.side_colors.col_cols == null ? null : 
     d3.select('.outer').append('svg')
@@ -310,8 +313,10 @@ function heatmap(selector, data, options) {
       .attr("height", "100%")
       .attr("width", "20%");
 
-  var colColors = !data.side_colors.colcolors ? null : colColorLabels(el.select('svg.colColors'), 
-    data, colColorsBounds.width, colColorsBounds.height, opts.axis_padding);
+  var colColors = !data.side_colors.colcolors ? null : 
+    colColorLabels(
+      el.select('svg.colColors'), 
+      data, colColorsBounds.width, colColorsBounds.height, opts.axis_padding);
 
   var col = !data.cols ? null : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height, opts.axis_padding);
   var colormap = colormap(el.select('svg.colormap'), data.matrix, colormapBounds.width, colormapBounds.height);
@@ -715,7 +720,9 @@ function heatmap(selector, data, options) {
   }
   
   function rowColorLabels(svg, data, width, height, padding) {
-    svg2 = svg.append('g').style('overflow', 'hidden');
+    svg2 = svg.append('svg')
+      .style('overflow', 'hidden')
+      .attr("height", height);
 
     d3.select('.rowColors')
       .style('height', '100%');
@@ -753,7 +760,7 @@ function heatmap(selector, data, options) {
     var yAxis = d3.svg.axis()
       .scale(colorscale_legendscale)
       .orient("right")
-      .tickSize(5);
+      .tickSize(10);
     
 
     // side color key
@@ -761,7 +768,7 @@ function heatmap(selector, data, options) {
       .data(colorlabels)
       .enter().append("rect")
       .attr("class", "scol_label")
-      .attr("width", 8)
+      .attr("width", 10)
       .attr('x', 0)
       .attr("height", function(d) { 
         return (colorscale_legendscale.rangeBand()); 
@@ -799,7 +806,7 @@ function heatmap(selector, data, options) {
       d3.svg.axis()
         .scale(name_yscale)
         .orient("bottom")
-        .outerTickSize(0)
+        // .outerTickSize(5)
         .tickPadding(padding)
         .tickValues(row_colnames);
 
@@ -809,7 +816,7 @@ function heatmap(selector, data, options) {
         .call(name_yaxis)
       .selectAll("text")
         .classed("tick", true)
-        .attr("transform", "rotate(90), translate(0, 0)")
+        .attr("transform", "rotate(45), translate(0, 0)")
         .style("text-anchor", "start");
 
     var tooltip = d3.tip()
@@ -872,7 +879,9 @@ function heatmap(selector, data, options) {
   }
 
   function colColorLabels(svg, data, width, height, padding) {
-    svg2 = svg.append('g').style('overflow', 'hidden');
+    svg2 = svg.append('svg')
+      .style('overflow', 'hidden')
+      .attr("width", width);
     
     d3.select('.colColors')
       .style('width', '100%');
@@ -910,14 +919,14 @@ function heatmap(selector, data, options) {
     var yAxis = d3.svg.axis()
       .scale(colorscale_legendscale)
       .orient("right")
-      .tickSize(7)
+      .tickSize(10);
 
     // Color ramp: bricks
     collabels.selectAll(".colorscale_key")
       .data(colorlabels)
       .enter().append("rect")
       .attr("class", "scol_label")
-      .attr("width", 8)
+      .attr("width", 10)
       .attr('x', 0)
       .attr("height", function(d) { 
         return (colorscale_legendscale.rangeBand()); 
@@ -955,7 +964,7 @@ function heatmap(selector, data, options) {
       d3.svg.axis()
         .scale(name_xscale)
         .orient("right")
-        .outerTickSize(0)
+        // .outerTickSize(5)
         .tickPadding(padding)
         .tickValues(col_colnames);
 

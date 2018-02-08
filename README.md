@@ -55,7 +55,7 @@ You can also create standalone pages using
 
     install("./d3heatmap")
 
-    library("d3heatmap")`
+    library("d3heatmap")
     d <- d3heatmap(mtcars, 
         main = "mtcars demo", 
         scale = "column", 
@@ -63,7 +63,7 @@ You can also create standalone pages using
         show_grid = FALSE,
         cellnote_scale = TRUE,
         symbreaks = TRUE
-    )`
+    )
     
     htmlwidgets::saveWidget(d, file="testd3.html", selfcontained=TRUE)
 

@@ -421,9 +421,9 @@ d3heatmap <- function(x,
   side_colors <- list(
     col_cols=col_cols,
     row_cols=row_cols,
-    rowcolor_colnames = if (exists("rowcolor_colnames", inherits = FALSE) rowcolor_colnames
+    rowcolor_colnames = if (exists("rowcolor_colnames", inherits = FALSE)) rowcolor_colnames
       else NULL,
-    colcolor_colnames =  if (exists("colcolor_colnames", inherits = FALSE) colcolor_colnames
+    colcolor_colnames =  if (exists("colcolor_colnames", inherits = FALSE)) colcolor_colnames
       else NULL,
     rowcolors = if (!is.null(RowSideFactors)) RowSideFactors else NULL,
     colcolors = if (!is.null(ColSideFactors)) ColSideFactors else NULL

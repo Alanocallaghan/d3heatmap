@@ -317,7 +317,7 @@ d3heatmap <- function(x,
 
 
     if (is.matrix(ColSideFactors)) {
-      colcolor_colnames <- colnames(colcolor_colnames)
+      colcolor_colnames <- colnames(ColSideFactors)
     } else {
       colcolor_colnames <- NULL
     }

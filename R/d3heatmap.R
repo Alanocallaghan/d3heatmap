@@ -84,9 +84,13 @@ NULL
 #' @param ColSideFactors (optional) character vector of length ncol(x) containing
 #'   the color names for a horizontal side bar that may be used to annotate the
 #'   columns of x.
+#' @param ColSideColors An alias for ColSideFactors.
+#' @param row_side_palette,col_side_palette A vector of colours used to generate
+#'  the row or column side colour bar.
 #' @param RowSideFactors (optional) character vector of length nrow(x) containing
 #'   the color names for a vertical side bar that may be used to annotate the
 #'   rows of x.
+#' @param RowSideColors An alias for RowSideFactors.
 #' @param col_cols,row_cols Colors to be used in RowSideColors and ColSideColors respectively
 #' @param labRow character vectors with row labels to use (from top to bottom); default to rownames(x).
 #' @param labCol character vectors with column labels to use (from left to right); default to colnames(x).

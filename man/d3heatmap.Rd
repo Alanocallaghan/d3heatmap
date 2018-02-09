@@ -64,6 +64,13 @@ columns of x.}
 the color names for a vertical side bar that may be used to annotate the
 rows of x.}
 
+\item{RowSideColors}{An alias for RowSideFactors.}
+
+\item{ColSideColors}{An alias for ColSideFactors.}
+
+\item{row_side_palette, col_side_palette}{A vector of colours used to generate
+the row or column side colour bar.}
+
 \item{labRow}{character vectors with row labels to use (from top to bottom); default to rownames(x).}
 
 \item{labCol}{character vectors with column labels to use (from left to right); default to colnames(x).}
@@ -81,17 +88,17 @@ and will give it a value cexCol*14}
 \item{cellnote}{(optional) matrix of the same dimensions as \code{x} that has the human-readable version of each value, for displaying to the user on hover. If \code{NULL}, then \code{x} will be coerced using \code{\link{as.character}}.
 If missing, it will use \code{x}, after rounding it based on the \code{digits} parameter.}
 
-\item{cellnote_scale}{logical (default is FALSE). IF cellnote is missing and x is used, 
+\item{cellnote_scale}{logical (default is FALSE). IF cellnote is missing and x is used,
 should cellnote be scaled if x is also scaled?}
 
-\item{theme}{A custom CSS theme to use. Currently the only valid values are 
-\code{""} and \code{"dark"}. \code{"dark"} is primarily intended for 
+\item{theme}{A custom CSS theme to use. Currently the only valid values are
+\code{""} and \code{"dark"}. \code{"dark"} is primarily intended for
 standalone visualizations, not R Markdown or Shiny.}
 
 \item{colors}{TEMPORARILY DISABLED WHILE TRANSITIONING
 METHOD FOR GENERATING COLORS. USE scalecolors INSTEAD.
 Either a colorbrewer2.org palette name (e.g. \code{"YlOrRd"} or
-  \code{"Blues"}), or a vector of colors to interpolate in hexadecimal 
+  \code{"Blues"}), or a vector of colors to interpolate in hexadecimal
   \code{"#RRGGBB"} format, or a color interpolation function like
   \code{\link[grDevices]{colorRamp}}.}
 
@@ -105,7 +112,7 @@ must be equal to breaks}
 
 \item{colorkey_title}{Name of color key}
 
-\item{show_color_legend}{Show color key and density 
+\item{show_color_legend}{Show color key and density
 information? (TRUE/FALSE)}
 
 \item{col_cols, row_cols}{Colors to be used in RowSideColors and ColSideColors respectively}
@@ -123,11 +130,11 @@ information? (TRUE/FALSE)}
 \item{yaxis_font_size}{Font size of axis labels, as a CSS size (e.g. "14px" or "12pt").}
 
 \item{brush_color}{The base color to be used for the brush. The brush will be
-filled with a low-opacity version of this color. \code{"#RRGGBB"} format 
+filled with a low-opacity version of this color. \code{"#RRGGBB"} format
 expected.}
 
 \item{show_grid}{\code{TRUE} to show gridlines, \code{FALSE} to hide them, or
-a numeric value to specify the gridline thickness in pixels (can be a 
+a numeric value to specify the gridline thickness in pixels (can be a
 non-integer).}
 
 \item{anim_duration}{Number of milliseconds to animate zooming in and out.

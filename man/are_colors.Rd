@@ -2,18 +2,18 @@
 % Please edit documentation in R/d3heatmap.R
 \name{are_colors}
 \alias{are_colors}
-\title{are_colors 
+\title{are_colors
 Helper function to check for valid color strings}
 \usage{
 are_colors(x)
 }
 \arguments{
-\item{x}{color vector (etc) to test. 
+\item{x}{color vector (etc) to test.
 
 Taken (untested) from:
 http://stackoverflow.com/questions/13289009/check-if-character-string-is-a-valid-color-representation#13290832}
 }
 \description{
-are_colors 
+are_colors
 Helper function to check for valid color strings
 }
